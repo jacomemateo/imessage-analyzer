@@ -1,0 +1,4 @@
+chat*
+*.csv
+test.py
+.DS_Store
