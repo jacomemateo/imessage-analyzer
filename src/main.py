@@ -1,18 +1,18 @@
 from imessage_analysis import iMessageAnalysis
 import os
 
-chat_db = "chat.db" # Location of database
+chat_db = "res/chat.db" # Location of database
 self_number = "Me" # Self identifyer
 n = 500 # Number of messages to return, set to None to retrun everything
-stop_list = "SmartStoplist.txt" # Path to the stoplist file
+stop_list = "res/SmartStoplist.txt" # Path to the stoplist file
 
 handle_identifyer = 89 # The identifyer of the person you want to analyse the
 # messages of, i'll probably make u able to select this by contact name later on
 
-output_dir = "output/"
+output_dir = "out/"
 
 if __name__ == "__main__":
-    os.makedirs("test", exist_ok=True)
+    os.makedirs(output_dir, exist_ok=True)
 
     ma = iMessageAnalysis(chat_db, handle_identifyer, n, self_number, stop_list)
 
