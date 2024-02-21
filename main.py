@@ -37,10 +37,10 @@ def display(messages):
     plt.title(":D")
     plt.show()
 
-def word_frequency(messages):
+def word_frequency(messages, from_me=None):
     tokenized_count = {}
 
-    snow_stemmer = SnowballStemmer(language='english')
+    # snow_stemmer = SnowballStemmer(language='english')
 
     # Load in stop words
     stop_words = [""]
@@ -48,8 +48,13 @@ def word_frequency(messages):
         for line in f:
             stop_words.append(line.strip())
 
+
     # Itterate thru every message
     for message in messages:
+        if from_me != None:
+            if message['is_from_me'] != from_me: 
+                continue
+
         # Itterate thru every word in each message
         for word in message['body'].split():
             word = word.lower() # Make lowercase
@@ -70,7 +75,7 @@ def word_frequency(messages):
     # Return an array of tuples sorted by the word count in reverse order
     return sorted(tokenized_count.items(), key=lambda x: x[1], reverse=True)
 
-def emoji_frequency(messages):
+def emoji_frequency(messages, from_me=None):
     exclude_list = ["￼", "�", "♂", "♀", "🏻", "🏼", "🏽", "🏾", "🏾"]
 
     emoji_freq = {}
@@ -91,7 +96,10 @@ def emoji_frequency(messages):
 
     for message in messages:
         matches = emoji_pattern.findall(message['body'])
-        from_me = message['is_from_me']
+
+        if from_me!=None:
+            if message['is_from_me'] != from_me:
+                continue
 
         # If there's no matches then skip the message
         if len(matches) == 0:
@@ -127,12 +135,20 @@ def save_to_file(messages, filename, count=None):
 if __name__ == "__main__":
     messages = read_messages(chat_db, n=n, self_number=self_number, human_readable_date=True, handle_identifyer=89)
     
-    # for message in messages:
-        # print(message['body'])
-        # print(type(message['date']))
-        # print(print_date(message['date']))
+    # adri_word_count = word_frequency(messages, from_me=False)
+    # save_to_file(adri_word_count, "adri_messages.csv")
 
+    # mateo_word_count = word_frequency(messages, from_me=True)
+    # save_to_file(mateo_word_count, "mateo_messages.csv")
 
-    # word_count = word_frequency(messages)
-    emoji_count = emoji_frequency(messages)
-    save_to_file(emoji_count, "adri_emoji.csv")
+    # combined_word_count = word_frequency(messages)
+    # save_to_file(combined_word_count, "combined_messages.csv")
+
+    adri_word_count = emoji_frequency(messages, from_me=False)
+    save_to_file(adri_word_count, "adri_messages.csv")
+
+    mateo_word_count = emoji_frequency(messages, from_me=True)
+    save_to_file(mateo_word_count, "mateo_messages.csv")
+
+    combined_word_count = emoji_frequency(messages)
+    save_to_file(combined_word_count, "combined_messages.csv")

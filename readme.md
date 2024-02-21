@@ -1,2 +1,2 @@
-## iMessage Analizer
+## iMessage Analyzer
 
