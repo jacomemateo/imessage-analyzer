@@ -1,9 +1,11 @@
 from imessage_analysis import iMessageAnalysis
+import getpass
+import shutil
 import os
 
 chat_db = "res/chat.db" # Location of database
 self_number = "Me" # Self identifyer
-n = 500 # Number of messages to return, set to None to retrun everything
+n = None # Number of messages to return, set to None to retrun everything
 stop_list = "res/SmartStoplist.txt" # Path to the stoplist file
 
 handle_identifyer = 89 # The identifyer of the person you want to analyse the
@@ -11,10 +13,23 @@ handle_identifyer = 89 # The identifyer of the person you want to analyse the
 
 output_dir = "out/"
 
+def fetch_chat_db():
+    username = getpass.getuser()
+    path = "/Users/" + username + "/Library/Messages/chat.db"
+
+    shutil.copyfile(path, "res/chat.db")
+
+
 if __name__ == "__main__":
+    fetch = input("Enter YES if you would like to fetch the chat.db file: ")
+    if fetch == "YES":
+        fetch_chat_db()
+
     os.makedirs(output_dir, exist_ok=True)
 
     ma = iMessageAnalysis(chat_db, handle_identifyer, n, self_number, stop_list)
+
+    # ma.print_messages(50)
 
     # adri_word_count = word_frequency(messages, from_me=False)
     # save_to_file(adri_word_count, "adri_messages.csv")

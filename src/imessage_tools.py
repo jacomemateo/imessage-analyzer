@@ -2,7 +2,7 @@ import sqlite3
 import datetime
 import pytz
 
-second = 1000000000
+SECOND = 1000000000
 
 def get_chat_mapping(db_location):
     conn = sqlite3.connect(db_location)
@@ -21,7 +21,7 @@ def apple_date_to_datetime(date):
     jan2001 = datetime.datetime.fromisoformat('2001-01-01')
     jan2001 = jan2001.replace(tzinfo=pytz.UTC)
 
-    new_date = jan2001 + datetime.timedelta(seconds=date/second)
+    new_date = jan2001 + datetime.timedelta(seconds=date/SECOND)
 
     eastern_timezone = pytz.timezone('US/Eastern')
     new_date = new_date.astimezone(eastern_timezone)
@@ -70,6 +70,9 @@ def read_messages(db_location, n=10, self_number='Me', human_readable_date=True,
                         attributed_body = str(attributed_body).split("NSDictionary")[0]
                         attributed_body = attributed_body[6:-12]
                         body = attributed_body
+
+        if body == '':
+            continue
 
         if "Loved “" in body or "Emphasized “" in body or "Laughed at “" in body or "Liked “" in body or "Disliked “" in body or "Questioned “" in body or "20 Questions" == body or "Cup Pong" == body or "Mancala" == body:
             continue

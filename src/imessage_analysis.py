@@ -29,8 +29,17 @@ class iMessageAnalysis:
             u"\U000024C2-\U0001F251" 
             "]+", flags=re.UNICODE)
 
-    def print_date(date):
-        return date.strftime("%Y-%m-%d %H:%M:%S")
+    def print_messages(self, n=None):
+        if n == None:
+            n = len(self.messages)
+
+        for i in range(n):
+            message = self.messages[i]['body']
+            date = self.messages[i]['date']
+
+            date_str = date.strftime("%Y-%m-%d %H:%M:%S")
+
+            print(f"{(date_str)}  {message}")
 
     def word_frequency(self, from_me=None):
         word_freq = {}
