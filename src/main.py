@@ -5,7 +5,7 @@ import os
 
 chat_db = "res/chat.db" # Location of database
 self_number = "Me" # Self identifyer
-n = None # Number of messages to return, set to None to retrun everything
+n = 1000 # Number of messages to return, set to None to retrun everything
 stop_list = "res/SmartStoplist.txt" # Path to the stoplist file
 
 handle_identifyer = 89 # The identifyer of the person you want to analyse the
@@ -31,15 +31,12 @@ if __name__ == "__main__":
 
     # ma.print_messages(50)
 
-    # adri_word_count = word_frequency(messages, from_me=False)
-    # save_to_file(adri_word_count, "adri_messages.csv")
+    combined_hour_freq = ma.hour_frequency()
+    print(combined_hour_freq)
 
-    # mateo_word_count = word_frequency(messages, from_me=True)
-    # save_to_file(mateo_word_count, "mateo_messages.csv")
+    adir_word_freq = ma.word_frequency()
+    print(adir_word_freq.head(20))
 
-    # combined_word_count = word_frequency(messages)
-    # save_to_file(combined_word_count, "combined_messages.csv")
-
-    adri_word_count = ma.emoji_frequency(from_me=False).save(output_dir+"adri_messages.csv")
-    mateo_word_count = ma.emoji_frequency(from_me=True).save(output_dir+"mateo_messages.csv")
-    combined_word_count = ma.emoji_frequency().save(output_dir+"combined_messages.csv")
+    # adri_word_count = ma.emoji_frequency(from_me=False).save(output_dir+"adri_messages.csv")
+    # mateo_word_count = ma.emoji_frequency(from_me=True).save(output_dir+"mateo_messages.csv")
+    # combined_word_count = ma.emoji_frequency().save(output_dir+"combined_messages.csv")

@@ -1,5 +1,6 @@
 from imessage_tools import *
 from freq_list import FreqList
+import pandas as pd
 import re
 
 class iMessageAnalysis:
@@ -7,10 +8,10 @@ class iMessageAnalysis:
         self.messages = read_messages(chat_db, n=n, self_number=self_number, human_readable_date=True, handle_identifyer=handle_identifyer)
 
         # Load in stop words
-        stop_words = []
+        self.stop_words = []
         with open(stop_list) as f:
             for line in f:
-                stop_words.append(line.strip())
+                self.stop_words.append(line.strip())
 
         self.exclude_list = ["￼", "�", "♂", "♀", "🏻", "🏼", "🏽", "🏾", "🏾"]
 
@@ -41,6 +42,43 @@ class iMessageAnalysis:
 
             print(f"{(date_str)}  {message}")
 
+    def hour_frequency(self, from_me=None):
+        hour_freq = {}
+
+        for message in self.messages:
+            if from_me != None:
+                if message['is_from_me'] != from_me: 
+                    continue
+            
+            hour = message['date'].hour
+
+            if hour not in hour_freq:
+                    hour_freq[hour] = 1
+            else:
+                hour_freq[hour] = hour_freq[hour]+1
+
+        hour_freq = sorted(hour_freq.items(), key=lambda x: x[0])        
+
+        sum = 0
+
+        for hour in hour_freq:
+            sum += hour[1]
+
+        hour_dict = {}
+        hour_dict['hour'] = []
+        hour_dict['percent'] = []
+        
+        for i in range(len(hour_freq)):
+            time = hour_freq[i][0]
+            percent = hour_freq[i][1]/sum
+
+            hour_dict['hour'].append(time)
+            hour_dict['percent'].append(percent)
+        
+        hour_freq = pd.DataFrame(hour_dict)
+        hour_freq.set_index('hour', inplace=True)
+        return hour_freq
+
     def word_frequency(self, from_me=None):
         word_freq = {}
 
@@ -67,7 +105,18 @@ class iMessageAnalysis:
             
         # Return an array of tuples sorted by the word count in reverse order
         word_freq = sorted(word_freq.items(), key=lambda x: x[1], reverse=True)
-        word_freq = FreqList(word_freq)
+        
+        word_dict = {}
+        word_dict['word'] = []
+        word_dict['count'] = []
+
+        for i in range(len(word_freq)):
+            print(f"WORD = {word_freq[i][0]}")
+
+            word_dict['word'].append(word_freq[i][0])
+            word_dict['count'].append(word_freq[i][1])
+
+        word_freq = pd.DataFrame(word_dict)
 
         return word_freq
 

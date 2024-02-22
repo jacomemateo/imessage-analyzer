@@ -71,7 +71,7 @@ def read_messages(db_location, n=10, self_number='Me', human_readable_date=True,
                         attributed_body = attributed_body[6:-12]
                         body = attributed_body
 
-        if body == '':
+        if body == ' ' or body == '￼':
             continue
 
         if "Loved “" in body or "Emphasized “" in body or "Laughed at “" in body or "Liked “" in body or "Disliked “" in body or "Questioned “" in body or "20 Questions" == body or "Cup Pong" == body or "Mancala" == body:
