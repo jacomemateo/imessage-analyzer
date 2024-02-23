@@ -41,6 +41,7 @@ class iMessageAnalysis:
 
             print(f"{(date_str)}  {message}")
 
+
     def hour_frequency(self, from_me=None):
         hour_freq = {}
 
@@ -204,4 +205,3 @@ class iMessageAnalysis:
         dates_freq.set_index('date', inplace=True)
 
         return dates_freq
-        

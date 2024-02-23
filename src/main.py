@@ -26,11 +26,12 @@ def fetch_chat_db():
 if __name__ == "__main__":
     os.makedirs(output_dir, exist_ok=True)
 
-    inpt = input("Enter YES if you would like to fetch the chat.db file: ")
-    if inpt == "YES":
-        fetch_chat_db()
+    # inpt = input("Enter YES if you would like to fetch the chat.db file: ")
+    # if inpt == "YES":
+        # fetch_chat_db()
+    inpt = 'YES'
 
-    inpt = input("Enter YES if you want to re-calculate, otherwise program will look for files in out/ dir: ")
+    # inpt = input("Enter YES if you want to re-calculate, otherwise program will look for files in out/ dir: ")
     if inpt == "YES":
         ma = iMessageAnalysis(chat_db, handle_identifyer, n, self_number, stop_list)
 
@@ -50,48 +51,48 @@ if __name__ == "__main__":
     emoji_freq = pd.read_csv(output_dir+'emojis.csv')
     date_freq  = pd.read_csv(output_dir+"day2_freq.csv")
 
-    html_table1 = hour_freq.to_html(index=False)
-    html_table2 = word_freq.head(20).to_html(index=False)
-    html_table3 = emoji_freq.head(20).to_html(index=False)
+    # html_table1 = hour_freq.to_html(index=False)
+    # html_table2 = word_freq.head(20).to_html(index=False)
+    # html_table3 = emoji_freq.head(20).to_html(index=False)
 
-    plt.figure(figsize=(17, 12))
+    # plt.figure(figsize=(17, 12))
 
-    plt.bar(date_freq['date'], date_freq['messages_sent'])
-    plt.xlabel('Date')
-    plt.ylabel('Messages Sent')
-    plt.title('Messages Sent Over Time')
+    # plt.bar(date_freq['date'], date_freq['messages_sent'])
+    # plt.xlabel('Date')
+    # plt.ylabel('Messages Sent')
+    # plt.title('Messages Sent Over Time')
 
-    n = 10  # Show every nth date
-    plt.xticks(date_freq['date'][::n], date_freq['date'][::n], rotation=45) 
+    # n = 10  # Show every nth date
+    # plt.xticks(date_freq['date'][::n], date_freq['date'][::n], rotation=45) 
 
-    # Save the plot as an image
-    plt.savefig(output_dir+'bar_chart.png')
+    # # Save the plot as an image
+    # plt.savefig(output_dir+'bar_chart.png')
 
 
-    html_content = f"""
-    <html>
-    <head>
-    <link rel="stylesheet" href="https://cdn.simplecss.org/simple.min.css">
-        <style>
-        .table-container {{
-            display: flex;
-        }}
-        table {{
-            margin-right: 20px;
-        }}
-        </style>
-    </head>
-    <body>
-        <img src="/Users/mateo/Code/Adri/out/bar_chart.png" alt="Not working">
-        <div class="table-container" style="margin:auto">
-        {html_table1}
-        {html_table2}
-        {html_table3}
-        </div>
-    </body>
-    </html>
-    """
+    # html_content = f"""
+    # <html>
+    # <head>
+    # <link rel="stylesheet" href="https://cdn.simplecss.org/simple.min.css">
+    #     <style>
+    #     .table-container {{
+    #         display: flex;
+    #     }}
+    #     table {{
+    #         margin-right: 20px;
+    #     }}
+    #     </style>
+    # </head>
+    # <body>
+    #     <img src="/Users/mateo/Code/Adri/out/bar_chart.png" alt="Not working">
+    #     <div class="table-container" style="margin:auto">
+    #     {html_table1}
+    #     {html_table2}
+    #     {html_table3}
+    #     </div>
+    # </body>
+    # </html>
+    # """
 
-    webview.create_window('iMessage Analysis', html=html_content, min_size=(1200, 1000))
+    # webview.create_window('iMessage Analysis', html=html_content, min_size=(1200, 1000))
 
-    webview.start()
+    # webview.start()
