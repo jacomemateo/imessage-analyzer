@@ -1,5 +1,4 @@
 from imessage_tools import *
-from freq_list import FreqList
 import pandas as pd
 import re
 
@@ -94,7 +93,7 @@ class iMessageAnalysis:
                 word = re.sub(r'[^\w\']+', '', word) # Remove all non a-Z charachters, non numbers but keep (')
 
                 # Skip if in stop words
-                if word in self.stop_words:
+                if word in self.stop_words or word == '':
                     continue
 
                 # Add to list
@@ -111,12 +110,12 @@ class iMessageAnalysis:
         word_dict['count'] = []
 
         for i in range(len(word_freq)):
-            print(f"WORD = {word_freq[i][0]}")
-
             word_dict['word'].append(word_freq[i][0])
             word_dict['count'].append(word_freq[i][1])
 
         word_freq = pd.DataFrame(word_dict)
+        word_freq.set_index('word', inplace=True)
+
 
         return word_freq
 
@@ -140,7 +139,7 @@ class iMessageAnalysis:
 
             # Itterate thru every emoji in each message
             for emoji in flatenned_matches:
-                if emoji in self.exclude_list:
+                if emoji in self.exclude_list or emoji == '\ufe0f':
                     continue
 
                 # Add to list
@@ -151,6 +150,58 @@ class iMessageAnalysis:
         
         # Return an array of tuples sorted by the word count in reverse order
         emoji_freq = sorted(emoji_freq.items(), key=lambda x: x[1], reverse=True)
-        emoji_freq = FreqList(emoji_freq)
+
+        emoji_dict = {}
+        emoji_dict['emoji'] = []
+        emoji_dict['count'] = []
+
+        for emoji in emoji_freq:
+            emoji_dict['emoji'].append(emoji[0])
+            emoji_dict['count'].append(emoji[1])
+
+        emoji_freq = pd.DataFrame(emoji_dict)
+        emoji_freq.set_index('emoji', inplace=True)
 
         return emoji_freq
+    
+    def day_frequency(self, from_me=None):
+        dates_freq = {}
+
+        for message in self.messages:
+            date = message['date'].date()
+
+            if date not in dates_freq:
+                dates_freq[date] = 1
+            else:
+                dates_freq[date] = dates_freq[date]+1
+        
+        min_date = min(dates_freq.keys())
+        max_date = max(dates_freq.keys())
+
+        print(f'{min_date} {max_date}')
+
+        date_difference =  (max_date-min_date).days + 1 # timedelta obj
+
+        all_dates = [min_date]
+
+        for i in range(1, date_difference):
+            all_dates.append(all_dates[i-1] + datetime.timedelta(days=1))
+
+        dates_dict = {}
+        dates_dict['date'] = []
+        dates_dict['messages_sent'] = []
+
+
+        for date in all_dates:
+            if date not in dates_freq:
+                dates_dict['date'].append(date)
+                dates_dict['messages_sent'].append(0)
+            else:
+                dates_dict['date'].append(date)
+                dates_dict['messages_sent'].append(dates_freq[date])
+
+        dates_freq = pd.DataFrame(dates_dict)
+        dates_freq.set_index('date', inplace=True)
+
+        return dates_freq
+        

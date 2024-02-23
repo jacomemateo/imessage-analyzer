@@ -1,11 +1,14 @@
 from imessage_analysis import iMessageAnalysis
+import matplotlib.pyplot as plt
+import pandas as pd
+import webview
 import getpass
 import shutil
 import os
 
 chat_db = "res/chat.db" # Location of database
 self_number = "Me" # Self identifyer
-n = 1000 # Number of messages to return, set to None to retrun everything
+n = None # Number of messages to return, set to None to retrun everything
 stop_list = "res/SmartStoplist.txt" # Path to the stoplist file
 
 handle_identifyer = 89 # The identifyer of the person you want to analyse the
@@ -21,22 +24,74 @@ def fetch_chat_db():
 
 
 if __name__ == "__main__":
-    fetch = input("Enter YES if you would like to fetch the chat.db file: ")
-    if fetch == "YES":
-        fetch_chat_db()
-
     os.makedirs(output_dir, exist_ok=True)
 
-    ma = iMessageAnalysis(chat_db, handle_identifyer, n, self_number, stop_list)
+    inpt = input("Enter YES if you would like to fetch the chat.db file: ")
+    if inpt == "YES":
+        fetch_chat_db()
 
-    # ma.print_messages(50)
+    inpt = input("Enter YES if you want to re-calculate, otherwise program will look for files in out/ dir: ")
+    if inpt == "YES":
+        ma = iMessageAnalysis(chat_db, handle_identifyer, n, self_number, stop_list)
 
-    combined_hour_freq = ma.hour_frequency()
-    print(combined_hour_freq)
+        hour_freq = ma.hour_frequency()
+        word_freq = ma.word_frequency()
+        emoji_freq = ma.emoji_frequency()
+        date_freq = ma.day_frequency()
 
-    adir_word_freq = ma.word_frequency()
-    print(adir_word_freq.head(20))
+        hour_freq.to_csv(output_dir+'hour.csv')
+        word_freq.to_csv(output_dir+'words.csv')
+        emoji_freq.to_csv(output_dir+'emojis.csv')
+        date_freq.to_csv(output_dir+"day2_freq.csv")
 
-    # adri_word_count = ma.emoji_frequency(from_me=False).save(output_dir+"adri_messages.csv")
-    # mateo_word_count = ma.emoji_frequency(from_me=True).save(output_dir+"mateo_messages.csv")
-    # combined_word_count = ma.emoji_frequency().save(output_dir+"combined_messages.csv")
+
+    hour_freq = pd.read_csv(output_dir+'hour.csv')
+    word_freq = pd.read_csv(output_dir+'words.csv')
+    emoji_freq = pd.read_csv(output_dir+'emojis.csv')
+    date_freq  = pd.read_csv(output_dir+"day2_freq.csv")
+
+    html_table1 = hour_freq.to_html(index=False)
+    html_table2 = word_freq.head(20).to_html(index=False)
+    html_table3 = emoji_freq.head(20).to_html(index=False)
+
+    plt.figure(figsize=(17, 12))
+
+    plt.bar(date_freq['date'], date_freq['messages_sent'])
+    plt.xlabel('Date')
+    plt.ylabel('Messages Sent')
+    plt.title('Messages Sent Over Time')
+
+    n = 10  # Show every nth date
+    plt.xticks(date_freq['date'][::n], date_freq['date'][::n], rotation=45) 
+
+    # Save the plot as an image
+    plt.savefig(output_dir+'bar_chart.png')
+
+
+    html_content = f"""
+    <html>
+    <head>
+    <link rel="stylesheet" href="https://cdn.simplecss.org/simple.min.css">
+        <style>
+        .table-container {{
+            display: flex;
+        }}
+        table {{
+            margin-right: 20px;
+        }}
+        </style>
+    </head>
+    <body>
+        <img src="/Users/mateo/Code/Adri/out/bar_chart.png" alt="Not working">
+        <div class="table-container" style="margin:auto">
+        {html_table1}
+        {html_table2}
+        {html_table3}
+        </div>
+    </body>
+    </html>
+    """
+
+    webview.create_window('iMessage Analysis', html=html_content, min_size=(1200, 1000))
+
+    webview.start()
